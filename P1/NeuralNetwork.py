@@ -1,5 +1,6 @@
 import numpy as np
 
+
 def sigmoid(x):
     return 1 / (1 + np.exp(-x))
 
@@ -36,7 +37,35 @@ class NeuralNetwork:
         self.W2 += lr * a1.T.dot(dw2)
         self.b2 += lr * np.sum(dw2)
 
+        return dz1, dz2
+
     def train(self, x, y, epochs, lr=0.1):
+        W1_history = []
+        W2_history = []
+        MSE_history = []
+        classification_error_history = []
+
         for _ in range(epochs):
             a1, a2 = self.forward(x)
-            self.backward(x, y, a1, a2, lr=lr)
+
+            MSE_output = np.mean(np.square(y - a2))
+
+            W1_history.append(self.W1.copy())
+            W2_history.append(self.W2.copy())
+
+            dz1, dz2 = self.backward(x, y, a1, a2, lr=lr)
+
+            MSE_hidden = np.mean(np.square(dz1))
+            MSE_history.append([MSE_hidden, MSE_output])
+
+            pred = a2 > 0.5
+            classification_error_history.append(
+                np.mean(pred != y)
+            )
+
+        return (
+            np.array(W1_history),
+            np.array(W2_history),
+            np.array(MSE_history),
+            np.array(classification_error_history)
+        )
