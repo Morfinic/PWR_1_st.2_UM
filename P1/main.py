@@ -20,7 +20,12 @@ print("Before training:")
 predictions = NN.forward(x)
 print("Predictions:\n", predictions[1])
 
-w1_his, w2_his, mse_history, class_error = NN.train(x, y, epochs=80_000)
+w1_his, w2_his, mse_history, class_error = NN.train(
+    x, y,
+    epochs=1000,
+    lr=0.5,
+    momentum=0.9
+)
 
 # Test the trained network
 print("\nAfter training:")

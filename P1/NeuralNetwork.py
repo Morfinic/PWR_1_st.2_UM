@@ -16,6 +16,10 @@ class NeuralNetwork:
         self.W2 = np.random.rand(self.hiddenLayer, self.outputLayer)
         self.b1 = np.random.rand(1, self.hiddenLayer)
         self.b2 = np.random.rand(1, self.outputLayer)
+        self.v_W1 = np.zeros_like(self.W1)
+        self.v_b1 = np.zeros_like(self.b1)
+        self.v_W2 = np.zeros_like(self.W2)
+        self.v_b2 = np.zeros_like(self.b2)
 
     def forward(self, x):
         z1 = np.dot(x, self.W1) + self.b1
@@ -26,20 +30,25 @@ class NeuralNetwork:
 
         return a1, a2
 
-    def backward(self, x, y, a1, a2, lr):
-        dz2 = y - a2
+    def backward(self, x, y, a1, a2, lr, momentum):
+        dz2 = a2 - y
         dw2 = dz2 * sigmoidDeriv(a2)
         dz1 = dw2.dot(self.W2.T)
         dw1 = dz1 * sigmoidDeriv(a1)
 
-        self.W1 += lr * x.T.dot(dw1)
-        self.b1 += lr * np.sum(dw1)
-        self.W2 += lr * a1.T.dot(dw2)
-        self.b2 += lr * np.sum(dw2)
+        self.v_W1 = momentum * self.v_W1 - lr * x.T.dot(dw1)
+        self.v_b1 = momentum * self.v_b1 - lr * np.sum(dw1, axis=0, keepdims=True)
+        self.v_W2 = momentum * self.v_W2 - lr * a1.T.dot(dw2)
+        self.v_b2 = momentum * self.v_b2 - lr * np.sum(dw2, axis=0, keepdims=True)
+
+        self.W1 += self.v_W1
+        self.b1 += self.v_b1
+        self.W2 += self.v_W2
+        self.b2 += self.v_b2
 
         return dz1, dz2
 
-    def train(self, x, y, epochs, lr=0.1):
+    def train(self, x, y, epochs, lr=0.1, momentum=0.75):
         W1_history = []
         W2_history = []
         MSE_history = []
@@ -53,7 +62,7 @@ class NeuralNetwork:
             W1_history.append(self.W1.copy())
             W2_history.append(self.W2.copy())
 
-            dz1, dz2 = self.backward(x, y, a1, a2, lr=lr)
+            dz1, dz2 = self.backward(x, y, a1, a2, lr=lr, momentum=momentum)
 
             MSE_hidden = np.mean(np.square(dz1))
             MSE_history.append([MSE_hidden, MSE_output])
