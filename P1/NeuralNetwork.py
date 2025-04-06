@@ -54,7 +54,7 @@ class NeuralNetwork:
         MSE_history = []
         classification_error_history = []
 
-        for _ in range(epochs):
+        for epoch in range(epochs):
             a1, a2 = self.forward(x)
 
             MSE_output = np.mean(np.square(y - a2))
