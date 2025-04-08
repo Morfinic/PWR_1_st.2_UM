@@ -12,6 +12,9 @@ class NeuralNetwork:
         self.inputLayer = 2
         self.hiddenLayer = 4
         self.outputLayer = 1
+        # https://www.cs.stir.ac.uk/%7Ekjt/techreps/pdf/TR148.pdf
+        # Strona 19
+        # Xavier-Glorot weight init
         self.W1 = np.random.normal(0, np.sqrt(1/self.inputLayer), (self.inputLayer, self.hiddenLayer))
         self.W2 = np.random.normal(0, np.sqrt(1/self.hiddenLayer), (self.hiddenLayer, self.outputLayer))
         self.b1 = np.random.rand(1, self.hiddenLayer)
