@@ -12,8 +12,8 @@ class NeuralNetwork:
         self.inputLayer = 2
         self.hiddenLayer = 2
         self.outputLayer = 1
-        self.W1 = np.random.rand(self.inputLayer, self.hiddenLayer)
-        self.W2 = np.random.rand(self.hiddenLayer, self.outputLayer)
+        self.W1 = np.random.normal(0, np.sqrt(1/self.inputLayer), (self.inputLayer, self.hiddenLayer))
+        self.W2 = np.random.normal(0, np.sqrt(1/self.hiddenLayer), (self.hiddenLayer, self.outputLayer))
         self.b1 = np.random.rand(1, self.hiddenLayer)
         self.b2 = np.random.rand(1, self.outputLayer)
         self.v_W1 = np.zeros_like(self.W1)
