@@ -22,8 +22,8 @@ print("Predictions:\n", predictions[1])
 
 w1_his, w2_his, mse_history, class_error = NN.train(
     x, y,
-    epochs=200,
-    lr=0.6,
+    epochs=300,
+    lr=0.3,
     momentum=0.9
 )
 

@@ -10,7 +10,7 @@ def sigmoidDeriv(x):
 class NeuralNetwork:
     def __init__(self):
         self.inputLayer = 2
-        self.hiddenLayer = 2
+        self.hiddenLayer = 4
         self.outputLayer = 1
         self.W1 = np.random.normal(0, np.sqrt(1/self.inputLayer), (self.inputLayer, self.hiddenLayer))
         self.W2 = np.random.normal(0, np.sqrt(1/self.hiddenLayer), (self.hiddenLayer, self.outputLayer))
@@ -36,15 +36,17 @@ class NeuralNetwork:
         dz1 = dw2.dot(self.W2.T)
         dw1 = dz1 * sigmoidDeriv(a1)
 
-        self.v_W1 = momentum * self.v_W1 - lr * x.T.dot(dw1)
-        self.v_b1 = momentum * self.v_b1 - lr * np.sum(dw1, axis=0, keepdims=True)
-        self.v_W2 = momentum * self.v_W2 - lr * a1.T.dot(dw2)
-        self.v_b2 = momentum * self.v_b2 - lr * np.sum(dw2, axis=0, keepdims=True)
+        # Artykul z momentum
+        # https://visualstudiomagazine.com/articles/2017/08/01/neural-network-momentum.aspx#:%7E:text=Neural%20network%20momentum%20is%20a,known%2C%20correct%2C%20target%20values.
+        self.v_W1 = momentum * self.v_W1 + lr * x.T.dot(dw1)
+        self.v_b1 = momentum * self.v_b1 + lr * np.sum(dw1, axis=0, keepdims=True)
+        self.v_W2 = momentum * self.v_W2 + lr * a1.T.dot(dw2)
+        self.v_b2 = momentum * self.v_b2 + lr * np.sum(dw2, axis=0, keepdims=True)
 
-        self.W1 += self.v_W1
-        self.b1 += self.v_b1
-        self.W2 += self.v_W2
-        self.b2 += self.v_b2
+        self.W1 -= self.v_W1
+        self.b1 -= self.v_b1
+        self.W2 -= self.v_W2
+        self.b2 -= self.v_b2
 
         return dz1, dz2
 
